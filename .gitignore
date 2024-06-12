@@ -41,3 +41,6 @@ out/
 
 ### H2 ###
 *.mv.db
+*.db
+data/
+data/testdb.mv.db
