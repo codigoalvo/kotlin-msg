@@ -4,6 +4,8 @@ import br.com.codigoalvo.kotlinmsg.model.Message
 import br.com.codigoalvo.kotlinmsg.service.MessageService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder
+import java.net.URI
 
 @RestController
 @RequestMapping("/v1/messages")
@@ -18,8 +20,11 @@ class MessageController(val service: MessageService) {
         ResponseEntity.ok(service.getById(id))
 
     @PostMapping
-    fun post(@RequestBody message: Message): ResponseEntity<*> =
-        ResponseEntity.ok(service.post(message))
+    fun post(@RequestBody message: Message): ResponseEntity<*> {
+        val savedMessage = service.post(message)
+        val uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(savedMessage.id).toUri()
+        return ResponseEntity.created(uri).body(savedMessage)
+    }
 
     @PutMapping("/{id}")
     fun put(@PathVariable id: String, @RequestBody message: Message): ResponseEntity<*> {
